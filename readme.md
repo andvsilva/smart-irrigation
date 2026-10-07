@@ -1,5 +1,7 @@
 # ESP32 + micro:bit Environmental Monitor
 
+Author: @profandrevsilva 01/10/2026
+
 A wireless environmental monitoring system using a **BBC micro:bit**, **ESP32**, **Bluetooth Low Energy (BLE)**, and a built-in **ESP32 Web Server**.
 
 The micro:bit reads environmental sensor data and transmits it to the ESP32 using the **Nordic UART Service (NUS)** over Bluetooth. The ESP32 receives the data and provides a web dashboard accessible from any device connected to the same Wi-Fi network.
