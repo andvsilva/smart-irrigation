@@ -1,24 +1,3 @@
-/**
- * ==========================================================
- * 
- * RECEIVE COMMAND FROM ESP32
- * 
- * ==========================================================
- */
-/**
- * ==========================================================
- * 
- * MAIN LOOP
- * 
- * ==========================================================
- */
-/**
- * ==========================================================
- * 
- * START BLUETOOTH UART
- * 
- * ==========================================================
- */
 bluetooth.onBluetoothConnected(function () {
     connected = true
     basic.showIcon(IconNames.SmallHeart)
@@ -29,73 +8,42 @@ bluetooth.onBluetoothDisconnected(function () {
 })
 bluetooth.onUartDataReceived(serial.delimiters(Delimiters.NewLine), function () {
     command = bluetooth.uartReadUntil(serial.delimiters(Delimiters.NewLine))
-    command = command.trim()
-command = command.toUpperCase()
-// ======================================================
-    // COMMAND: ON
-    // ======================================================
-    // --------------------------------------------------
-    // ADD YOUR DEVICE CONTROL HERE
-    // Example:
-    // 
-    // pins.digitalWritePin(DigitalPin.P0, 1)
-    // 
-    // --------------------------------------------------
-    // ======================================================
-    // COMMAND: OFF
-    // ======================================================
-    // --------------------------------------------------
-    // ADD YOUR DEVICE CONTROL HERE
-    // Example:
-    // 
-    // pins.digitalWritePin(DigitalPin.P0, 0)
-    // 
-    // --------------------------------------------------
-    if (command == "ON") {
-        basic.showString("ON")
+    command = command.trim().toUpperCase()
+if (command == "ON") {
+        pins.digitalWritePin(DigitalPin.P12, 1)
     } else if (command == "OFF") {
-        basic.showString("OFF")
+        pins.digitalWritePin(DigitalPin.P12, 0)
     }
 })
 let temperature = 0
+let humidity = 0
 let connected = false
 let command = ""
 bluetooth.startUartService()
 basic.showIcon(IconNames.Yes)
-basic.pause(1000)
-/**
- * ==========================================================
- * 
- * BLUETOOTH CONNECTED
- * 
- * ==========================================================
- */
-/**
- * ==========================================================
- * 
- * BLUETOOTH DISCONNECTED
- * 
- * ==========================================================
- */
 basic.forever(function () {
+    // Leitura dos sensores
+    humidity = pins.analogReadPin(AnalogPin.P1) / 10
+    temperature = input.temperature()
+    // Envio dos dados ao ESP32
     if (connected) {
-        // ==================================================
-        // MICRO:BIT INTERNAL TEMPERATURE SENSOR
-        // ==================================================
-        temperature = input.temperature()
-        // ==================================================
-        // SEND TEMPERATURE TO ESP32
-        // ==================================================
-        bluetooth.uartWriteLine("TEMP:" + temperature + ", HUMIDADE: " + "99999")
-        // ==================================================
-        // DISPLAY TEMPERATURE
-        // ==================================================
-        basic.showNumber(temperature)
-        // ==================================================
-        // SEND EVERY 2 SECONDS
-        // ==================================================
-        basic.pause(2000)
-    } else {
-        basic.pause(500)
+        bluetooth.uartWriteLine("TEMP:" + temperature + ", HUMIDADE:" + Math.round(humidity))
     }
+    // Controle das saídas
+    if (humidity < 30) {
+        pins.digitalWritePin(DigitalPin.P2, 0)
+        pins.digitalWritePin(DigitalPin.P8, 1)
+        pins.digitalWritePin(DigitalPin.P12, 1)
+        basic.pause(2000)
+        pins.digitalWritePin(DigitalPin.P12, 0)
+    } else {
+        pins.digitalWritePin(DigitalPin.P8, 0)
+        pins.digitalWritePin(DigitalPin.P2, 1)
+        basic.pause(2000)
+    }
+    // Exibição dos valores no display LED
+    basic.showNumber(Math.round(humidity))
+    basic.pause(500)
+    basic.showNumber(temperature)
+    basic.pause(500)
 })

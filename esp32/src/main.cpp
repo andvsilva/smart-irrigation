@@ -14,8 +14,8 @@
 // WIFI
 // ============================================================
 
-const char* WIFI_SSID = ".....";
-const char* WIFI_PASSWORD = "........";
+const char* WIFI_SSID = "andre";
+const char* WIFI_PASSWORD = "@Nd16727316";
 
 // ============================================================
 // MICRO:BIT UART
@@ -36,7 +36,7 @@ const char* WIFI_PASSWORD = "........";
 // MICRO:BIT
 // ============================================================
 
-const char* MICROBIT_NAME = "BBC micro:bit [gigig]";
+const char* MICROBIT_NAME = "BBC micro:bit [vovag]";
 
 // ============================================================
 // WEB SERVER
@@ -950,6 +950,25 @@ void connectWiFi() {
 
         Serial.println("========================================");
         Serial.println();
+
+        Serial.println();
+        Serial.println("========== IP DIAGNOSTIC ==========");
+
+        Serial.print("WiFi status: ");
+        Serial.println(WiFi.status());
+
+        Serial.print("Connected: ");
+        Serial.println(
+            WiFi.status() == WL_CONNECTED ? "YES" : "NO"
+        );
+
+        Serial.print("Local IP: ");
+        Serial.println(WiFi.localIP());
+
+        Serial.print("Gateway: ");
+        Serial.println(WiFi.gatewayIP());
+
+        Serial.println("==================================");
 
     } else {
 
